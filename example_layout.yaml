@@ -1,0 +1,60 @@
+#
+# Example layout file for the TG165 Firmware Composer (compose-fw.py)
+#
+
+# The original_firmware value specifies the path to the firmware update file
+# that our new firmware should be based off of. This is the default firmware
+# that will be booted if the OK button is not pressed during power on.
+# (It is always assumed to be in the FLIR update.bin format, and with a load
+#  address of 0x08010000.)
+original_firmware: Upgrade.orig.bin
+
+# The entry_point value specifies the address at which the given program should
+# start. This is typically the load address of the raw "boot selector" binary.
+entry_point: 0x08050000
+
+# The input array contains all of the files that will be merged into the
+# provided firmware image. Typically, this contains at least your boot
+# selector binary.
+input:
+
+  # Each YAML entry (starting with the '-') represents a file that will be
+  # merged into our firmware image. Entries can have the following properties:
+  #
+  # filename -- Required. Points to the file that contains our firmware.
+  # load_address -- Required. The address at which the given firmware image
+  #     should be loaded.
+  # format: -- Optional; defaults to 'binary'. The format of our input binary.
+  #     Can be 'binary' (raw binary) or 'upgrade.bin' (FLIR upgrade format).
+  # entry_point -- Required for bare binaries; ignored for others. Specifies
+  #     the entry point address of the binary. (We can't infer this from the
+  #     vector table if the file has no vector table!)
+- filename: boot_select/bootsel.bin
+  load_address: 0x08050000
+  format: binary
+
+  # Subsequent entries start with another '-'. You can have as many as you'd like.
+- filename: alt_bootloader/usbdfu.bin
+  load_address: 0x08050100
+  format: binary
+
+- filename: bootloader_extractor/extractor.bin
+  format: binary
+  load_address: 0x08053000
+
+
+# The output array contains a list of output files that should be created.
+# Each entry should have the following properties:
+#
+# filename -- Required. The target file type to be produced.
+# format -- Required. The file format to be produced. Can be 'binary' or
+#     'upgrade.bin'.
+output:
+
+- filename: Upgrade.bin
+  format: upgrade.bin
+
+- filename: Upgrade.raw
+  format: binary
+
+
