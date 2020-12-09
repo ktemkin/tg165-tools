@@ -1,0 +1,8 @@
+tags
+*.pyc
+*.bin
+*.raw
+*.map
+*.o
+*.elf
+*.d
